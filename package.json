@@ -1,0 +1,181 @@
+{
+  "name": "quantumlang",
+  "displayName": "QuantumLang",
+  "description": "Official QuantumLang language support by Quantum Technology, powered by qtlc.",
+  "version": "0.1.0",
+  "publisher": "quantumtechnology",
+  "license": "MIT",
+  "icon": "image/logo.png",
+  "preview": true,
+  "qna": false,
+  "galleryBanner": {
+    "color": "#101820",
+    "theme": "dark"
+  },
+  "badges": [
+    {
+      "url": "https://github.com/quantumgat/qtlang-vscode/actions/workflows/qtlc-vscode-vsix.yml/badge.svg",
+      "href": "https://github.com/quantumgat/qtlang-vscode/actions",
+      "description": "GitHub packaging workflow status"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quantumgat/qtlang-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/quantumgat/qtlang-vscode/issues"
+  },
+  "homepage": "https://github.com/quantumgat/qtlang-vscode#readme",
+  "keywords": [
+    "quantumlang",
+    "qtlc",
+    "language-server",
+    "compiler",
+    "lsp"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "engines": {
+    "vscode": "^1.86.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:quantumlang",
+    "workspaceContains:quantum.toml"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "quantumlang",
+        "aliases": [
+          "QuantumLang",
+          "qn"
+        ],
+        "extensions": [
+          ".qn"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./image/qn-file-light.svg",
+          "dark": "./image/qn-file-dark.svg"
+        }
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "quantumlang-qn-icons",
+        "label": "QuantumLang QN Icons",
+        "path": "./file-icons/quantumlang-icon-theme.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "quantumlang",
+        "scopeName": "source.quantumlang",
+        "path": "./syntaxes/quantumlang.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "QuantumLang",
+      "properties": {
+        "quantumlang.qtlcPath": {
+          "type": "string",
+          "default": "qtlc",
+          "description": "Path to the qtlc executable used by the thin IDE adapter."
+        },
+        "quantumlang.traceProtocol": {
+          "type": "boolean",
+          "default": false,
+          "description": "Ask qtlc server for compact protocol traces while debugging editor integration."
+        },
+        "quantumlang.packageTarget": {
+          "type": "string",
+          "default": "app",
+          "description": "QuantumLang package target name used for editor queries when a package has more than one target."
+        },
+        "quantumlang.format.trimTrailingWhitespace": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ask qtlc server formatting to trim trailing horizontal whitespace."
+        },
+        "quantumlang.format.ensureFinalNewline": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ask qtlc server document formatting to keep a final newline."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "quantumlang.selectPackageRoot",
+        "title": "QuantumLang: Select Package Root"
+      },
+      {
+        "command": "quantumlang.build",
+        "title": "QuantumLang: Build"
+      },
+      {
+        "command": "quantumlang.run",
+        "title": "QuantumLang: Run"
+      },
+      {
+        "command": "quantumlang.showServerOutput",
+        "title": "QuantumLang: Show Server Output"
+      },
+      {
+        "command": "quantumlang.preflight",
+        "title": "QuantumLang: Preflight"
+      },
+      {
+        "command": "quantumlang.restartServer",
+        "title": "QuantumLang: Restart Language Server"
+      },
+      {
+        "command": "quantumlang.cacheDashboard",
+        "title": "QuantumLang: Cache Dashboard"
+      },
+      {
+        "command": "quantumlang.cacheSummary",
+        "title": "QuantumLang: Cache Summary"
+      },
+      {
+        "command": "quantumlang.clearCurrentPackageCache",
+        "title": "QuantumLang: Clear Current Package Cache"
+      },
+      {
+        "command": "quantumlang.clearCodeActionCache",
+        "title": "QuantumLang: Clear Code-Action Cache"
+      },
+      {
+        "command": "quantumlang.formatDocument",
+        "title": "QuantumLang: Format Document"
+      },
+      {
+        "command": "quantumlang.renameSymbol",
+        "title": "QuantumLang: Rename Symbol"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package:release-check": "node scripts/package-check.js",
+    "package:prepare-output": "node scripts/prepare-vsix-output.js",
+    "package:vsix": "npm run compile && npm run package:release-check && npm run package:prepare-output && vsce package --no-dependencies --out dist/quantumlang-0.1.0.vsix",
+    "package:check": "npm run compile && npm run package:release-check && vsce ls",
+    "smoke:vsix": "node scripts/vsix-smoke.js",
+    "smoke:protocol": "node scripts/protocol-smoke.js",
+    "smoke:local": "npm run compile && npm run smoke:protocol"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.86.0",
+    "@vscode/vsce": "^2.15.0",
+    "typescript": "^5.3.0"
+  }
+}

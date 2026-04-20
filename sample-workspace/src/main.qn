@@ -1,0 +1,8 @@
+import math::{add}
+
+fn main() -> i64 {
+  let test: u256 = 234
+  return add(40, 2)
+}
+
+

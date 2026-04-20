@@ -1,0 +1,8 @@
+{
+  "quantumlang.qtlcPath": "${workspaceFolder}/../../../build/compiler/driver/qtlc",
+  "quantumlang.packageTarget": "app",
+  "quantumlang.traceProtocol": true,
+  "files.associations": {
+    "*.qn": "quantumlang"
+  }
+}

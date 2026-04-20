@@ -1,0 +1,10 @@
+[package]
+name = "qtlc-installed-smoke"
+version = "0.1.0"
+
+[sources]
+roots = ["src"]
+
+[targets.app]
+kind = "bin"
+main = "src/main.qn"

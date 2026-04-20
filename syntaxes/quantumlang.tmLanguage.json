@@ -1,0 +1,271 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "QuantumLang",
+  "scopeName": "source.quantumlang",
+  "fileTypes": [
+    "qn"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#attributes"
+    },
+    {
+      "include": "#imports"
+    },
+    {
+      "include": "#declarations"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#function_calls"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#punctuation"
+    }
+  ],
+  "repository": {
+    "attributes": {
+      "patterns": [
+        {
+          "name": "meta.attribute.quantumlang",
+          "begin": "#\\[",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.attribute.begin.quantumlang"
+            }
+          },
+          "end": "\\]",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.attribute.end.quantumlang"
+            }
+          },
+          "patterns": [
+            {
+              "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b",
+              "name": "entity.name.function.attribute.quantumlang"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#numbers"
+            }
+          ]
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.quantumlang",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.quantumlang",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "name": "meta.function.definition.quantumlang",
+          "match": "\\b(fn)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.function.quantumlang"
+            },
+            "2": {
+              "name": "entity.name.function.quantumlang"
+            }
+          }
+        },
+        {
+          "name": "meta.type.definition.quantumlang",
+          "match": "\\b(struct|enum|trait|type|impl)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.type.quantumlang"
+            },
+            "2": {
+              "name": "entity.name.type.quantumlang"
+            }
+          }
+        },
+        {
+          "name": "meta.variable.declaration.quantumlang",
+          "match": "\\b(let)\\s+(mut\\s+)?([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "storage.type.variable.quantumlang"
+            },
+            "2": {
+              "name": "storage.modifier.mut.quantumlang"
+            },
+            "3": {
+              "name": "variable.other.readwrite.quantumlang"
+            }
+          }
+        }
+      ]
+    },
+    "function_calls": {
+      "patterns": [
+        {
+          "name": "meta.function-call.quantumlang",
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.call.quantumlang"
+            }
+          }
+        }
+      ]
+    },
+    "imports": {
+      "patterns": [
+        {
+          "name": "meta.import.quantumlang",
+          "match": "\\b(import)\\s+([A-Za-z_][A-Za-z0-9_]*(?:(::)[A-Za-z_][A-Za-z0-9_]*)*)(?:(::)(\\{[^}]*\\}|[A-Za-z_][A-Za-z0-9_]*))?",
+          "captures": {
+            "1": {
+              "name": "keyword.control.import.quantumlang"
+            },
+            "2": {
+              "name": "support.module.quantumlang"
+            },
+            "3": {
+              "name": "punctuation.accessor.double-colon.quantumlang"
+            },
+            "4": {
+              "name": "punctuation.accessor.double-colon.quantumlang"
+            },
+            "5": {
+              "name": "variable.other.imported.quantumlang"
+            }
+          }
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.quantumlang",
+          "match": "\\b(if|else|match|for|while|loop|break|continue|return|in|as)\\b"
+        },
+        {
+          "name": "keyword.other.quantumlang",
+          "match": "\\b(async|await|spawn|select|transaction|unsafe|extern|where|module|package|use)\\b"
+        },
+        {
+          "name": "storage.modifier.quantumlang",
+          "match": "\\b(pub|private|mut|const|static|move|ref)\\b"
+        },
+        {
+          "name": "constant.language.boolean.quantumlang",
+          "match": "\\b(true|false)\\b"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.quantumlang",
+          "match": "\\b(?:[0-9][0-9_]*\\.[0-9][0-9_]*|[0-9][0-9_]*(?:\\.[0-9][0-9_]*)?[eE][+-]?[0-9][0-9_]*)(?:f32|f64)?\\b"
+        },
+        {
+          "name": "constant.numeric.integer.hex.quantumlang",
+          "match": "\\b0x[0-9A-Fa-f_]+(?:i8|i16|i32|i64|i128|i256|isize|u8|u16|u32|u64|u128|u256|usize)?\\b"
+        },
+        {
+          "name": "constant.numeric.integer.binary.quantumlang",
+          "match": "\\b0b[01_]+(?:i8|i16|i32|i64|i128|i256|isize|u8|u16|u32|u64|u128|u256|usize)?\\b"
+        },
+        {
+          "name": "constant.numeric.integer.quantumlang",
+          "match": "\\b[0-9][0-9_]*(?:i8|i16|i32|i64|i128|i256|isize|u8|u16|u32|u64|u128|u256|usize)?\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.quantumlang",
+          "match": "->|=>|==|!=|<=|>=|&&|\\|\\||\\+|-|\\*|/|%|=|<|>|!|&|\\||\\^|\\.\\.|\\?"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.accessor.double-colon.quantumlang",
+          "match": "::"
+        },
+        {
+          "name": "punctuation.separator.quantumlang",
+          "match": "[,;:]"
+        },
+        {
+          "name": "punctuation.brace.quantumlang",
+          "match": "[{}\\[\\]()]"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.quantumlang",
+          "begin": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.quantumlang"
+            }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.quantumlang"
+            }
+          },
+          "patterns": [
+            {
+              "name": "constant.character.escape.quantumlang",
+              "match": "\\\\(?:[nrt0\"'\\\\]|x[0-9A-Fa-f]{2}|u\\{[0-9A-Fa-f_]+\\})"
+            }
+          ]
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "support.type.primitive.quantumlang",
+          "match": "\\b(Bool|Text|String|Str|Bytes|i8|i16|i32|i64|i128|i256|isize|u8|u16|u32|u64|u128|u256|usize|f32|f64|Unit|Never)\\b"
+        },
+        {
+          "name": "entity.name.type.quantumlang",
+          "match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,69 @@
+# QuantumLang VS Code extension local files.
+
+# Node dependencies and package-manager caches.
+node_modules/
+.npm/
+.yarn/
+.pnpm-store/
+
+# TypeScript build output.
+out/
+*.tsbuildinfo
+
+# VS Code extension packages and package output.
+dist/
+*.vsix
+*.tgz
+
+# VS Code test and extension-host output.
+.vscode-test/
+.vscode-test-web/
+test-resources/
+
+# Keep shared VS Code dev config tracked.
+.vscode/*.log
+.vscode/*.local.json
+.vscode/settings.local.json
+*.code-workspace
+
+
+# Logs.
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Coverage and test reports.
+coverage/
+.nyc_output/
+junit.xml
+test-results/
+
+# OS and file-manager noise.
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files.
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Local environment overrides.
+.env
+.env.*
+!.env.example
+
+# Local qtlc/compiler artifacts created during extension smoke testing.
+qtlc_artifacts/
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe

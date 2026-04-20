@@ -1,0 +1,14 @@
+.vscode/**
+.vscode-test/**
+node_modules/**
+out/**/*.map
+src/**
+sample-workspace/**
+installed-smoke-workspace/**
+release-assets/**
+scripts/**
+*.vsix
+dist/**
+tsconfig.json
+package-lock.json
+MANUAL_SMOKE_CHECKLIST.md

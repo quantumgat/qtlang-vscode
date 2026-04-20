@@ -1,0 +1,11 @@
+import test::{addTest}
+
+fn add(left: i64, right: i64) -> i64 {
+  return left + right
+}
+
+fn main() -> i64 {
+
+  addTest(23,56)
+  return add(20, 22)
+}

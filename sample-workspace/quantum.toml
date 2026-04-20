@@ -1,0 +1,11 @@
+[package]
+name = "qtlc_ide_sample"
+
+[sources]
+roots = ["src"]
+
+[targets.app]
+kind = "bin"
+main = "src/main.qn"
+backend = "c"
+sources = ["src/math.qn"]
