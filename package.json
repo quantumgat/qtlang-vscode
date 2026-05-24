@@ -66,13 +66,6 @@
         }
       }
     ],
-    "iconThemes": [
-      {
-        "id": "quantumlang-qn-icons",
-        "label": "QuantumLang QN Icons",
-        "path": "./file-icons/quantumlang-icon-theme.json"
-      }
-    ],
     "grammars": [
       {
         "language": "quantumlang",

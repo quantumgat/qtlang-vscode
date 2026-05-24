@@ -6,6 +6,7 @@ src/**
 sample-workspace/**
 installed-smoke-workspace/**
 release-assets/**
+file-icons/**
 scripts/**
 *.vsix
 dist/**

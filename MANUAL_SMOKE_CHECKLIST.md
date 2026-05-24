@@ -102,12 +102,14 @@ Pass criteria:
 ## File Icon Check
 
 1. Install the `.vsix`.
-2. Run `Preferences: File Icon Theme`.
-3. Select `QuantumLang QN Icons`.
-4. Confirm `.qn` files use `image/qn-file-dark.svg` on dark themes and
+2. Open a `.qn` file and confirm the language mode is `QuantumLang`.
+3. Confirm this does not require switching the global VS Code file icon theme.
+4. Confirm existing project icons from other icon themes remain intact.
+5. Confirm `.qn` files can use `image/qn-file-dark.svg` on dark themes and
    `image/qn-file-light.svg` on light themes.
-5. If another icon theme is selected, `.qn` files may still show that theme's
-   default document icon; VS Code uses one active file icon theme at a time.
+6. If a third-party icon theme overrides unknown files, `.qn` files may show
+   that theme's default document icon until the theme adds a QuantumLang
+   mapping.
 
 ## Migration And Release Asset Check
 

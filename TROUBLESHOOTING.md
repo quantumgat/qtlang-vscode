@@ -157,14 +157,15 @@ Common fixes:
 
 ## File Icon Problems
 
-The extension contributes `QuantumLang QN Icons` for `.qn` files.
+The extension contributes light and dark language icons for `.qn` files, but it
+does not contribute a full Explorer file-icon theme. This avoids replacing the
+user's active icon theme and making other file icons disappear.
 
 Common fixes:
 
-- Run `Preferences: File Icon Theme` and select `QuantumLang QN Icons`.
-- If another icon theme is active, `.qn` files can keep showing that theme's
-  default document icon. VS Code uses one active file icon theme at a time.
-- Confirm `file-icons/quantumlang-icon-theme.json` is included in the package.
+- Confirm the file language mode is `QuantumLang`.
+- If a third-party icon theme is active, `.qn` files may keep showing that
+  theme's default document icon until that theme adds a QuantumLang mapping.
 - Confirm `image/qn-file-dark.svg` and `image/qn-file-light.svg` exist.
 
 ## Missing Hover, Completion, Or Code Actions

@@ -15,8 +15,8 @@ adapter by Quantum Technology.
 - Adds versioned settings migration notes in `MIGRATIONS.md`.
 - Adds a standalone installed-extension smoke workspace without repo-relative
   settings.
-- Adds the `QuantumLang QN Icons` file icon theme for `.qn` files using the
-  dark/light icons in `image/`.
+- Adds `.qn` language/page icons using the dark/light icons in `image/`
+  without replacing the user's active Explorer file-icon theme.
 - Switches the VS Code adapter package to the MIT license for marketplace
   preview packaging.
 - Adds marketplace preview metadata, gallery banner, support routing, and a

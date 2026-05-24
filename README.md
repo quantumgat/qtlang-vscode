@@ -1,270 +1,63 @@
 # QuantumLang for VS Code
 
-Official QuantumLang language support by Quantum Technology.
+Official QuantumLang language support by **Quantum Technology**.
 
-This directory is the first minimal IDE-extension boundary for QuantumLang. It
-intentionally stays thin: the extension starts `qtlc server`, forwards editor
-events and requests, and renders server results. Parsing, diagnostics, semantic
-analysis, package routing, code actions, and cache logic remain inside the
-compiler server.
+This extension keeps VS Code integration thin and reliable. It launches the
+`qtlc` compiler in language-server mode, forwards editor requests, and displays
+the results. Parsing, diagnostics, semantic analysis, formatting, rename, code
+actions, package routing, and cache ownership remain inside `qtlc`.
 
-## Boundary
+## Features
 
-```text
-VS Code extension
-  -> qtlc server process
-  -> newline-delimited JSON-RPC requests
-  -> qtlc query/code-action products
-  -> JSON-RPC responses and publishDiagnostics notifications
-```
+- Syntax highlighting for `.qn` files.
+- `.qn` language/page icons without replacing the user's active file icon
+  theme.
+- Diagnostics from `qtlc server`.
+- Hover, go-to-definition, and completion.
+- Document symbols and semantic-token support.
+- Code actions and code-action resolve for import fixes and rename preview.
+- Formatting, range formatting, prepare-rename, and rename.
+- Build and run commands that call the configured `qtlc` binary.
+- Package-root and target selection for multi-root workspaces.
+- Preflight and cache-dashboard commands for troubleshooting.
 
-The extension owns only editor plumbing:
+## Requirements
 
-- launch and stop `qtlc server`
-- show a compact QTLC status bar item
-- send `initialize`
-- send `textDocument/didOpen`
-- send `textDocument/didChange`
-- send `textDocument/didClose`
-- forward hover, definition, completion, code action, and code-action resolve
-- display diagnostics from `textDocument/publishDiagnostics`
-- run `qtlc build` and `qtlc run` in a terminal
-- select the active package root when multiple workspace folders are open
-- optionally log `$/qtlc/protocolTrace`
+Install `qtlc` before using the extension. The extension does not bundle the
+compiler.
 
-## Local Extension Host
-
-```sh
-cmake --build qtlc/build
-cd qtlc/ide/vscode
-npm install
-npm run compile
-```
-
-Open `qtlc/ide/vscode` in VS Code and run the `Run QuantumLang Extension`
-launch configuration. It opens the bundled `sample-workspace` folder in an
-extension host. The sample workspace contains `.vscode/settings.json` with this
-default compiler path:
-
-```text
-${workspaceFolder}/../../../build/compiler/driver/qtlc
-```
-
-You can override it with `quantumlang.qtlcPath`. The adapter expands
-`${workspaceFolder}` before launching `qtlc server`.
-
-For daily use, install the compiler on `PATH` instead:
+Recommended Linux install path:
 
 ```sh
 sudo ./qtlc/scripts/install-system.sh
 qtlc --version
 ```
 
-Then the extension can keep the default `quantumlang.qtlcPath` value of
-`qtlc`. On Linux this installs to `/usr/local/bin/qtlc`. See
-`qtlc/docs/INSTALL.md` for user-local and system install options.
+The default extension setting is:
 
-## Sample Workspace
+```json
+"quantumlang.qtlcPath": "qtlc"
+```
 
-The local sample workspace lives at:
+If `qtlc` is not on `PATH`, set `quantumlang.qtlcPath` to an absolute binary
+path. On Linux this is often `/usr/local/bin/qtlc`.
+
+## Quick Start
+
+1. Install or build `qtlc`.
+2. Open a folder with `quantum.toml` or a `.qn` file.
+3. Run `QuantumLang: Preflight`.
+4. Run `QuantumLang: Restart Language Server`.
+5. Open a `.qn` file and check diagnostics, hover, and completion.
+
+For installed-extension smoke testing, use:
 
 ```text
-qtlc/ide/vscode/sample-workspace
+installed-smoke-workspace/
 ```
 
-It contains a small `quantum.toml`, `src/main.qn`, and `src/math.qn`. Use it to
-test diagnostics, hover, go-to-definition, completion, and code actions without
-touching compiler fixtures.
-
-Editor requests use the nearest parent `quantum.toml` for the active `.qn`
-document. That keeps this sample working even when the larger repository is
-open and prevents diagnostics from being routed to the wrong package root.
-
-## Syntax Highlighting
-
-The extension contributes a TextMate grammar at
-`syntaxes/quantumlang.tmLanguage.json`. It is theme-aware and gives stable
-scopes for QuantumLang keywords, imports, function declarations and calls,
-primitive types, strings, numbers, comments, operators, and punctuation. Use a
-quality dark or light VS Code theme to control the exact colors.
-
-## Protocol Smoke
-
-After `npm install`, the protocol smoke can launch `qtlc server` directly:
-
-```sh
-npm run smoke:protocol
-```
-
-Set `QTLC_PATH=/absolute/path/to/qtlc` if the default built binary path is not
-correct. When `node_modules/` is not present, the smoke exits as skipped so C++
-build/test flows do not need Node dependencies.
-
-## Packaging
-
-Build and inspect an installable `.vsix` package from this directory:
-
-```sh
-cd qtlc/ide/vscode
-npm install
-npm run package:check
-npm run package:vsix
-```
-
-The package is written to `dist/quantumlang-0.1.0.vsix`. The
-`.vscodeignore` file keeps source, sample workspaces, local launch files, and
-installed dependencies out of the `.vsix`; the package carries only the
-compiled adapter, metadata, language configuration, release notes, license
-notice, troubleshooting docs, and icons needed by VS Code.
-
-The standalone extension `.gitignore` keeps `node_modules/`, `out/`, `dist/`,
-local `.vsix` packages, extension-host test folders, logs, coverage, and local
-editor state out of the `qtlang-vscode` repository.
-
-Packaging uses `vsce package --no-dependencies` because the extension is a thin
-transport adapter and does not bundle compiler/runtime logic. If an older
-packaging run accidentally created a file named `dist`, run
-`npm run package:prepare-output` and then rerun `npm run package:vsix`. The
-prepare step recovers that file as `dist/quantumlang-0.1.0.vsix` and
-creates the real output directory expected by VS Code.
-
-`npm run package:release-check` verifies release metadata before packaging:
-real repository/homepage/bugs URLs, visible `README.md`, visible
-`CHANGELOG.md`, visible `LICENSE.md`, icon presence, and package scripts.
-
-## Marketplace Metadata
-
-The Q80 marketplace metadata is intentionally preview-grade:
-
-- extension package name: `quantumlang`
-- display name: `QuantumLang`
-- publisher: `quantumtechnology`
-- company: `Quantum Technology`
-- license: `MIT` for the VS Code adapter package
-- marketplace preview flag: enabled
-- Q&A: disabled, with support routed to project issues
-- gallery banner: dark QuantumLang palette
-- badge: GitHub packaging workflow status
-- extension kind: workspace
-
-Screenshots are approval-gated. Do not reference screenshots from marketplace
-release notes until the files listed in `release-assets/README.md` are approved
-and committed.
-
-Install the generated package into a normal VS Code profile:
-
-```sh
-code --install-extension dist/quantumlang-0.1.0.vsix
-```
-
-Then open any workspace with `quantum.toml` or a `.qn` file and set
-`quantumlang.qtlcPath` to an installed `qtlc` binary. Run
-`QuantumLang: Restart Language Server`, then `QuantumLang: Show Server Output` to
-confirm the installed extension can launch `qtlc server`.
-
-## Installed Extension Smoke
-
-Use this smoke outside the source tree after installing the `.vsix`:
-
-1. Build or install `qtlc` somewhere stable. The recommended Linux system
-   install is `sudo ./qtlc/scripts/install-system.sh`.
-2. Open a separate QuantumLang workspace containing `quantum.toml`.
-3. If `qtlc` is not on `PATH`, set `quantumlang.qtlcPath` to the absolute
-   binary path.
-4. Open a `.qn` file and confirm diagnostics appear.
-5. Run `QuantumLang: Preflight` and confirm it reports `qtlcPath`, server
-   version, package root, package target, and cache health.
-6. Run `QuantumLang: Cache Dashboard` and confirm cache facts are returned.
-7. Run `QuantumLang: Build` and confirm the terminal uses the configured path.
-
-The standalone smoke workspace at `installed-smoke-workspace/` is designed for
-installed-extension testing. It has no repo-relative `.vscode/settings.json`;
-set `quantumlang.qtlcPath` yourself to prove the installed extension works
-outside the source tree.
-
-## Platform Compatibility Checklist
-
-- Linux: absolute paths such as `/home/user/bin/qtlc` and
-  `${workspaceFolder}/path/to/qtlc` should launch directly.
-- macOS: app-launched VS Code may not inherit shell `PATH`; prefer an absolute
-  `quantumlang.qtlcPath` for installed extension smoke.
-- Windows: use either `C:\\path\\to\\qtlc.exe` or
-  `${workspaceFolder}\\path\\to\\qtlc.exe`; the adapter normalizes workspace
-  substitutions before spawning the server.
-- All platforms: package-root selection and `quantumlang.packageTarget` should
-  be visible in the QTLC status bar and hover footer.
-
-## Settings Migrations
-
-Versioned settings migration notes live in `MIGRATIONS.md`. Check that file
-before changing defaults, renaming settings, or changing setting behavior.
-After changing any installed-user setting, update `MIGRATIONS.md`,
-`CHANGELOG.md`, and the manual smoke checklist.
-
-## File Icons
-
-The extension contributes the `QuantumLang QN Icons` file icon theme. It maps
-`.qn` files and the `quantumlang` language ID to the user-provided icons:
-
-- `image/qn-file-dark.svg` for dark themes
-- `image/qn-file-light.svg` for light themes
-
-Users can enable it from `Preferences: File Icon Theme`.
-
-VS Code only displays Explorer icons from the currently selected file icon
-theme, so there is one active file icon theme at a time. If another icon theme
-is active, `.qn` files may still show that theme's
-default document icon until the user selects `QuantumLang QN Icons` or that
-theme adds a QuantumLang mapping. The language registration also declares
-light/dark QuantumLang icons for the `quantumlang` language ID.
-
-## Release Assets
-
-Optional screenshot and demo asset guidance lives in `release-assets/README.md`.
-Use it for release notes when screenshots are approved. The current recommended
-captures are preflight output, diagnostics, cache dashboard, and `.qn` file
-icons.
-
-## Preflight
-
-`QuantumLang: Preflight` writes one operational report to the QuantumLang output
-channel:
-
-- configured `quantumlang.qtlcPath`
-- expanded active `qtlc` path
-- `qtlc --version` output
-- selected package root
-- selected package target
-- checked-source cache size and evictions
-- code-action cache size and evictions
-- source snapshot counts and bytes
-- recent memory-pressure notification count
-
-## Optional CI Packaging
-
-The optional GitLab CI packaging job lives at:
-
-```text
-.gitlab/ci/qtlc-vscode-vsix.yml
-```
-
-It is intentionally not required by the C++ build. Include it from the project
-pipeline when Node packaging is wanted. The job installs Node dependencies,
-runs `npm run package:check`, builds the `.vsix`, and publishes `dist/*.vsix`
-as short-lived CI artifacts.
-
-## VSIX Smoke
-
-After Node dependencies are installed, run:
-
-```sh
-npm run smoke:vsix
-```
-
-The smoke builds the `.vsix`, verifies `dist/*.vsix` exists, and installs it
-with `code --install-extension` when the VS Code CLI is available. If
-`node_modules` or the `code` CLI is missing, it exits as skipped so normal C++
-test flows remain independent from local editor tooling.
+That workspace has no repo-relative settings, so it proves the installed
+extension can find an installed compiler.
 
 ## Commands
 
@@ -281,61 +74,323 @@ test flows remain independent from local editor tooling.
 - `QuantumLang: Format Document`
 - `QuantumLang: Rename Symbol`
 
-The build and run commands create VS Code terminals in the selected package
-root and call the configured `quantumlang.qtlcPath`.
+Build and run commands open VS Code terminals in the selected package root and
+call the configured `quantumlang.qtlcPath`.
 
-The selected package root is persisted in workspace state. Changing
-`quantumlang.qtlcPath` or `quantumlang.traceProtocol` restarts `qtlc server`
-without restarting VS Code. Changing `quantumlang.packageTarget` updates editor
-query routing and the status bar without restarting the server. If the server
-exits unexpectedly, the adapter restarts it with a bounded exponential backoff
-and writes the details to the QuantumLang output channel.
-`QuantumLang: Restart Language Server` performs the same clean restart manually
-without changing settings.
+## Settings
 
-Cache tools are user-facing wrappers over `qtlc server` debug methods. Cache
-Summary sends `qtlc/cacheSummary` and prints checked-source, code-action,
-snapshot, and memory-pressure facts to the QuantumLang output channel. Clear
-Current Package Cache sends `qtlc/cacheClear` with `all` for the selected
-package root. Clear Code-Action Cache sends `qtlc/cacheClear` with
-`code-actions`. The extension only displays the returned facts; cache ownership
-and eviction decisions stay inside the compiler server. Recent
-`$/qtlc/memoryPressure` notifications are also recorded in the output channel as
-`memory-pressure` lines. `QuantumLang: Cache Dashboard` shows a small quick-pick
-dashboard for summary, clear-cache, restart, and output actions. Cache command
-details include the selected package target, and the status bar tooltip shows
-the current count of recent memory-pressure notifications.
-
-Formatting and rename are server-owned editor features. The TypeScript adapter
-only forwards VS Code requests to `qtlc server` and applies returned edits; it
-does not format source or compute rename edits itself. Document formatting,
-range formatting, prepare-rename validation, and rename workspace edits all use
-the same server protocol path. Public rename preview is resolved through
-`codeAction/resolve`, then applied as a normal workspace edit when the user
-chooses `Apply Preview`.
-
-Formatting can be tuned with:
-
-- `quantumlang.format.trimTrailingWhitespace`
-- `quantumlang.format.ensureFinalNewline`
-
-The hover footer and status bar show the selected package root and package
-target so it is clear which compiler context is answering editor requests.
-
-## Optional Local Smoke
-
-When dependencies are installed, this command compiles the TypeScript adapter
-and runs the protocol smoke:
-
-```sh
-npm run smoke:local
+```json
+{
+  "quantumlang.qtlcPath": "qtlc",
+  "quantumlang.packageTarget": "app",
+  "quantumlang.traceProtocol": false,
+  "quantumlang.format.trimTrailingWhitespace": true,
+  "quantumlang.format.ensureFinalNewline": true
+}
 ```
 
-## Current Scope
+`quantumlang.qtlcPath` supports absolute paths and `${workspaceFolder}`.
 
-This is a Quantum Technology marketplace-preview scaffold. It is ready for
-local `.vsix` packaging once Node dependencies are installed, but the final
-marketplace publication still needs approved screenshots and a real install
-smoke in a clean VS Code profile.
+`quantumlang.packageTarget` selects the package target used by editor queries
+when a package has more than one target.
 
-For common setup and server-start problems, see `TROUBLESHOOTING.md`.
+`quantumlang.traceProtocol` asks the server for compact protocol traces while
+debugging editor integration.
+
+## Language Server Boundary
+
+```text
+VS Code extension
+  -> qtlc server process
+  -> newline-delimited JSON-RPC requests
+  -> compiler query and code-action products
+  -> JSON-RPC responses and publishDiagnostics notifications
+```
+
+The TypeScript extension owns editor transport only:
+
+- start, stop, and restart `qtlc server`
+- send document lifecycle messages
+- forward hover, definition, completion, formatting, rename, and code-action
+  requests
+- display diagnostics and workspace edits returned by the server
+- show status, preflight, cache, and server-output UI
+
+Compiler behavior stays in `qtlc`.
+
+## Syntax Highlighting
+
+The extension contributes a TextMate grammar at:
+
+```text
+syntaxes/quantumlang.tmLanguage.json
+```
+
+It provides stable scopes for keywords, imports, function declarations,
+function calls, primitive types, strings, numbers, comments, operators, and
+punctuation. The active VS Code color theme controls the final colors.
+
+## File Icons
+
+The extension contributes light and dark icons on the `quantumlang` language
+registration. They are intended as `.qn` language/page icons:
+
+```text
+image/qn-file-dark.svg
+image/qn-file-light.svg
+```
+
+The extension does not contribute a full VS Code file-icon theme, because VS
+Code allows only one active Explorer icon theme at a time. Shipping a complete
+QuantumLang icon theme would replace the user's Material/Icon Set/Codicons
+theme and make other file icons disappear.
+
+If the active file-icon theme supports language icons or has no mapping for
+`.qn`, VS Code can show the QuantumLang icon for `.qn` files. If the active
+file-icon theme overrides unknown files with its own default document icon,
+`.qn` files may use that theme's default until the theme itself adds a
+QuantumLang mapping.
+
+## Package Routing
+
+Editor requests use the nearest parent `quantum.toml` for the active `.qn`
+document. This keeps nested sample projects and multi-root workspaces routed to
+the correct package root.
+
+The selected package root is persisted in workspace state. The selected package
+target appears in the status bar and in hover/status details so it is clear
+which compiler context answered a request.
+
+## Local Development
+
+From the repository root:
+
+```sh
+cmake --build qtlc/build
+cd qtlc/ide/vscode
+npm install
+npm run compile
+```
+
+Open `qtlc/ide/vscode` in VS Code and run the `Run QuantumLang Extension`
+launch configuration. It opens the bundled sample workspace:
+
+```text
+sample-workspace/
+```
+
+The sample workspace contains:
+
+```text
+quantum.toml
+src/main.qn
+src/math.qn
+```
+
+Use it to test diagnostics, hover, go-to-definition, completion, formatting,
+rename, and code actions without touching compiler fixtures.
+
+## Protocol Smoke
+
+After `npm install`, run:
+
+```sh
+npm run smoke:protocol
+```
+
+Set `QTLC_PATH=/absolute/path/to/qtlc` if the default built binary path is not
+correct. If `node_modules/` is not present, the smoke exits as skipped so C++
+test flows do not require Node dependencies.
+
+## Packaging
+
+Build and inspect an installable `.vsix` package:
+
+```sh
+cd qtlc/ide/vscode
+npm install
+npm run package:check
+npm run package:vsix
+```
+
+Release metadata can be checked without building the full package:
+
+```sh
+npm run package:release-check
+```
+
+The package is written to:
+
+```text
+dist/quantumlang-0.1.0.vsix
+```
+
+Packaging uses:
+
+```sh
+vsce package --no-dependencies
+```
+
+The extension is a transport adapter and does not bundle compiler/runtime
+logic. Users install `qtlc` separately.
+
+Release packages keep the public project documents visible in the VSIX:
+`README.md`, `CHANGELOG.md`, and `LICENSE.md`.
+
+If a previous packaging run accidentally created a file named `dist`, run:
+
+```sh
+npm run package:prepare-output
+npm run package:vsix
+```
+
+The standalone extension `.gitignore` keeps `node_modules/`, `out/`, `dist/`,
+local `.vsix` packages, extension-host test folders, logs, coverage, and local
+editor state out of the `qtlang-vscode` repository.
+
+The `.vscodeignore` file keeps source, sample workspaces, local launch files,
+installed dependencies, and development-only scripts out of the packaged
+extension.
+
+## Install Local VSIX
+
+```sh
+code --install-extension dist/quantumlang-0.1.0.vsix --force
+```
+
+Then run:
+
+```text
+Developer: Reload Window
+QuantumLang: Restart Language Server
+```
+
+## VSIX Smoke
+
+When Node dependencies and the VS Code CLI are available:
+
+```sh
+npm run smoke:vsix
+```
+
+The smoke builds the `.vsix`, checks that `dist/*.vsix` exists, and installs it
+with `code --install-extension`. If the VS Code CLI is missing, it reports a
+clean skip.
+
+## Platform Notes
+
+- Linux: `qtlc` on `PATH` or an absolute path such as `/usr/local/bin/qtlc`
+  should launch directly.
+- macOS: VS Code launched from Finder may not inherit shell `PATH`; prefer an
+  absolute `quantumlang.qtlcPath`.
+- Windows: use `C:\\path\\to\\qtlc.exe` or
+  `${workspaceFolder}\\path\\to\\qtlc.exe`.
+
+## Preflight
+
+`QuantumLang: Preflight` writes an operational report to the QuantumLang output
+channel:
+
+- configured `quantumlang.qtlcPath`
+- expanded active `qtlc` path
+- `qtlc --version`
+- selected package root
+- selected package target
+- checked-source cache health
+- code-action cache health
+- source snapshot counts and bytes
+- recent memory-pressure notification count
+
+## Cache Tools
+
+Cache tools are UI wrappers over server-owned debug methods:
+
+- `QuantumLang: Cache Dashboard`
+- `QuantumLang: Cache Summary`
+- `QuantumLang: Clear Current Package Cache`
+- `QuantumLang: Clear Code-Action Cache`
+
+The extension only displays returned facts. Cache ownership and eviction
+decisions stay inside `qtlc server`.
+
+## Formatting And Rename
+
+Formatting and rename are server-owned features. The extension forwards VS Code
+requests and applies returned edits. It does not format source or compute
+rename edits in TypeScript.
+
+Supported paths:
+
+- document formatting
+- range formatting
+- prepare-rename validation
+- rename workspace edits
+- public rename preview through `codeAction/resolve`
+
+Formatting settings:
+
+```json
+{
+  "quantumlang.format.trimTrailingWhitespace": true,
+  "quantumlang.format.ensureFinalNewline": true
+}
+```
+
+## Marketplace Metadata
+
+Public extension identity:
+
+```text
+Company:      Quantum Technology
+Repository:   https://github.com/quantumgat/qtlang-vscode
+Package:      quantumlang
+Display name: QuantumLang
+Publisher:    quantumtechnology
+License:      MIT
+```
+
+Marketplace metadata:
+
+- package name: `quantumlang`
+- display name: `QuantumLang`
+- publisher: `quantumtechnology`
+- company: `Quantum Technology`
+- license: `MIT`
+- Q&A disabled, with support routed to project issues
+- dark QuantumLang gallery banner
+- GitHub packaging workflow badge
+- workspace extension kind
+
+Screenshots and demo assets must be approved before they are referenced from
+marketplace release notes. See `release-assets/README.md`.
+
+## Optional CI Packaging
+
+The optional GitLab CI packaging job lives at:
+
+```text
+.gitlab/ci/qtlc-vscode-vsix.yml
+```
+
+The job installs Node dependencies, runs `npm run package:check`, builds the
+`.vsix`, and publishes `dist/*.vsix` as short-lived CI artifacts.
+
+## Versioned Settings
+
+Versioned setting migration notes live in:
+
+```text
+MIGRATIONS.md
+```
+
+Update `MIGRATIONS.md`, `CHANGELOG.md`, and the manual smoke checklist when a
+release changes installed-user settings or command behavior.
+
+## Troubleshooting
+
+For common setup, path, server-start, packaging, cache, formatting, and rename
+problems, see:
+
+```text
+TROUBLESHOOTING.md
+```

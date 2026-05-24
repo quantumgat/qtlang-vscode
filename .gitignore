@@ -20,12 +20,12 @@ dist/
 .vscode-test-web/
 test-resources/
 
-# Keep shared VS Code dev config tracked.
+# VS Code local/private editor state. Keep shared extension-host launch, task,
+# and settings files tracked in .vscode/.
 .vscode/*.log
 .vscode/*.local.json
 .vscode/settings.local.json
 *.code-workspace
-
 
 # Logs.
 npm-debug.log*

@@ -41,7 +41,6 @@ requireFile("image/icon-dark.png");
 requireFile("image/icon-light.png");
 requireFile("image/qn-file-dark.svg");
 requireFile("image/qn-file-light.svg");
-requireFile("file-icons/quantumlang-icon-theme.json");
 requireFile("installed-smoke-workspace/README.md");
 requireFile("installed-smoke-workspace/quantum.toml");
 requireFile("installed-smoke-workspace/src/main.qn");
@@ -110,10 +109,10 @@ requireText("README.md", "publisher: `quantumtechnology`");
 requireText("README.md", "company: `Quantum Technology`");
 requireText("README.md", "package:prepare-output");
 requireText("README.md", "vsce package --no-dependencies");
-requireText("README.md", "Preferences: File Icon Theme");
-requireText("README.md", "one active file icon theme");
-requireText("README.md", "Installed Extension Smoke");
-requireText("README.md", "Platform Compatibility Checklist");
+requireText("README.md", "language/page icons");
+requireText("README.md", "does not contribute a full VS Code file-icon theme");
+requireText("README.md", "Install Local VSIX");
+requireText("README.md", "Platform Notes");
 requireText("README.md", "QuantumLang: Preflight");
 requireText("CHANGELOG.md", packageJson.version);
 requireText("LICENSE.md", "MIT License");
@@ -123,8 +122,9 @@ requireText(".gitignore", "node_modules/");
 requireText(".gitignore", "dist/");
 requireText(".gitignore", "out/");
 requireText(".gitignore", "*.vsix");
-requireText("file-icons/quantumlang-icon-theme.json", "qn-file-dark.svg");
-requireText("file-icons/quantumlang-icon-theme.json", "qn-file-light.svg");
+if (JSON.stringify(packageJson.contributes?.iconThemes ?? []).includes("quantumlang")) {
+  fail("package.json does not contribute a full file-icon theme; adding one would replace the user's active icon theme");
+}
 const languageContribution = JSON.stringify(packageJson.contributes?.languages ?? []);
 if (!languageContribution.includes("\"icon\"") ||
     !languageContribution.includes("qn-file-dark.svg") ||
